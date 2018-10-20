@@ -27,10 +27,7 @@
         <div class="item">
             ONLINE GRADING SYSTEM
         </div>
-        <a class="<?php echo $usernav; ?> item" href="<?php echo base_url('index.php/UserAccount'); ?>">
-            User Accounts
-        </a>
-        <a class="<?php echo $classnav; ?> item" href="<?php echo base_url('index.php/Classes'); ?>">
+        <a class="item" href="<?php echo base_url('index.php/UserAccount'); ?>">
             Class
         </a>
         <div class="right menu">
