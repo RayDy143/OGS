@@ -11,12 +11,23 @@ class Classes extends CI_Controller{
 
     function index()
     {
-        $data['usernav']="";
-        $data['classnav']="active";
-        $data['title']="Classes";
-        $this->load->view('layout/header',$data);
-        $this->load->view('admin/class_view');
+        if(isset($_SESSION['UserAccountID'])){
+            if($_SESSION['RoleID']==1){
+                $data['usernav']="";
+                $data['userlogsnav']="";
+                $data['classnav']="active";
+                $data['title']="Classes";
+                $this->load->view('layout/header',$data);
+                $this->load->view('admin/class_view');
+            }else{
+                header('location:'.base_url('index.php/Teacher/Classes'));
+            }
+        }else{
+            header('location:'.base_url('index.php/Login'));
+        }
+
     }
+    //Adding a class
     public function Add()
     {
         $fields = array(
@@ -35,6 +46,7 @@ class Classes extends CI_Controller{
          }
          echo json_encode($data);
     }
+    //Getting all Class
     public function getClass()
     {
         $data['class']=$this->ClassModel->getClass();

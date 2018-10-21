@@ -14,15 +14,26 @@ class ManageClass extends CI_Controller{
       $this->load->view('layout/header');
       $this->load->view('admin/manage_class_view');
   }
+  //Loading the view
   public function Manage($id)
   {
-      $data['usernav']="";
-      $data['classnav']="active";
-      $data['title']="Manage Class";
-      $data['class']=$this->ClassModel->getSpecificClass($id);
-      $this->load->view('layout/header',$data);
-      $this->load->view('admin/manage_class_view');
+      if(isset($_SESSION['UserAccountID'])){
+          if($_SESSION['RoleID']==1){
+              $data['userlogsnav']="";
+              $data['usernav']="";
+              $data['classnav']="active";
+              $data['title']="Manage Class";
+              $data['class']=$this->ClassModel->getSpecificClass($id);
+              $this->load->view('layout/header',$data);
+              $this->load->view('admin/manage_class_view');
+          }else{
+              header('location:'.base_url('index.php/Teacher/Classes'));
+          }
+      }else{
+          header('location:'.base_url('index.php/Login'));
+      }
   }
+  //Adding a new student
   public function Add()
   {
       $fields = array(
@@ -37,6 +48,7 @@ class ManageClass extends CI_Controller{
        }
        echo json_encode($data);
   }
+  //Getting all the student
   public function getStudent()
   {
       $data['stud']=$this->StudentModel->getStudent($this->input->post('ID'));
@@ -46,6 +58,7 @@ class ManageClass extends CI_Controller{
       }
       echo json_encode($data);
   }
+  //Deleting all the student
   public function deleteStudent()
   {
       $where = array('StudentID' => $this->input->post('ID') );
@@ -56,6 +69,7 @@ class ManageClass extends CI_Controller{
       }
       echo json_encode($data);
   }
+  //Updating Student Info
   public function updateStudent()
   {
       $where = array('StudentID' => $this->input->post('ID') );

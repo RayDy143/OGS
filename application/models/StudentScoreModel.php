@@ -20,7 +20,7 @@ class StudentScoreModel extends CI_Model{
   }
   public function getStudentTotalScore($classid,$gradingperiod,$type,$studentid)
   {
-      $query=$this->db->query("SELECT SUM(studentscore.Score) as total FROM score inner join studentscore on score.ScoreID=studentscore.ScoreID where score.ClassID='$classid' and score.GradingPeriod='$gradingperiod' and score.Type='$type' and studentscore.StudentID='$studentid'");
+      $query=$this->db->query("SELECT SUM(studentscore.Score) as total FROM score inner join studentscore on score.ScoreID=studentscore.ScoreID where score.ClassID='$classid' and score.GradingPeriod='$gradingperiod' and score.Type='$type' and studentscore.StudentID='$studentid' and score.IsDeleted=0");
       if($query->num_rows()>0){
           return $query->row();
       }else{

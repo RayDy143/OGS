@@ -21,6 +21,8 @@
    </style>
    <script src="<?php echo base_url('assets/semantic/jquery.min.js'); ?>" type="text/javascript"></script>
    <script src="<?php echo base_url('assets/semantic/semantic.min.js'); ?>" type="text/javascript"></script>
+   <script src="<?php echo base_url('assets/semantic/components/tablesort.js'); ?>" type="text/javascript"></script>
+   <script src="<?php echo base_url('assets/semantic/components/printThis.js'); ?>" type="text/javascript"></script>
   </head>
   <body>
       <div class="ui massive menu">

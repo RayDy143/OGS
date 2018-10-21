@@ -21,6 +21,8 @@
    </style>
    <script src="<?php echo base_url('assets/semantic/jquery.min.js'); ?>" type="text/javascript"></script>
    <script src="<?php echo base_url('assets/semantic/semantic.min.js'); ?>" type="text/javascript"></script>
+   <script src="<?php echo base_url('assets/semantic/components/tablesort.js'); ?>" type="text/javascript"></script>
+   <script src="<?php echo base_url('assets/semantic/components/printThis.js'); ?>" type="text/javascript"></script>
   </head>
   <body>
       <div class="ui massive menu">
@@ -32,6 +34,9 @@
         </a>
         <a class="<?php echo $classnav; ?> item" href="<?php echo base_url('index.php/Classes'); ?>">
             Class
+        </a>
+        <a class="<?php echo $userlogsnav; ?> item" href="<?php echo base_url('index.php/UserLogs'); ?>">
+            Userlogs
         </a>
         <div class="right menu">
           <div class="item">

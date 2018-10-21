@@ -14,6 +14,7 @@
             if(isset($_SESSION['UserAccountID'])){
                 if($_SESSION['RoleID']==1){
                     $data['usernav']="active";
+                    $data['userlogsnav']="";
                     $data['classnav']="";
                     $data['title']="User Accounts";
                     $this->load->view('layout/header',$data);
@@ -26,6 +27,7 @@
             }
 
         }
+        //Adding account
         public function Add()
         {
             $fields = array(
@@ -44,6 +46,7 @@
              }
              echo json_encode($data);
         }
+        //Getting user
         public function getUser()
         {
             $data['user']=$this->UserAccountModel->Get();
@@ -53,6 +56,7 @@
             }
             echo json_encode($data);
         }
+        //Updating user
         public function updateUser()
         {
             $where = array('UserAccountiD' => $this->input->post('ID') );
@@ -71,6 +75,7 @@
              }
              echo json_encode($data);
         }
+        //getting teacher for dropdown
         public function getTeacher()
         {
             $data['teacher']=$this->UserAccountModel->getTeacher();
@@ -80,6 +85,7 @@
             }
             echo json_encode($data);
         }
+        //Soft deleting user
         public function deleteUser()
         {
             $where = array('UserAccountID' => $this->input->post('ID') );

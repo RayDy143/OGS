@@ -40,6 +40,7 @@
                 header('location:'.base_url('index.php/Login'));
             }
         }
+        //Getting class information
         public function getClass()
         {
             $data['class']=$this->ClassModel->getClassByTeacher();
@@ -49,6 +50,7 @@
             }
             echo json_encode($data);
         }
+        //Adding score
         public function addScore()
         {
             $fields = array(
@@ -65,9 +67,10 @@
             }
             echo json_encode($data);
         }
+        //Getting the score
         public function getScore()
         {
-            $where = array('Type' => $this->input->post('Type'),'ClassID'=>$this->input->post('ID'),'GradingPeriod'=>$this->input->post('GradingPeriod') );
+            $where = array('Type' => $this->input->post('Type'),'ClassID'=>$this->input->post('ID'),'GradingPeriod'=>$this->input->post('GradingPeriod'),'IsDeleted'=>0 );
             $data['score']=$this->ScoreModel->Get($where);
             $data['success']=false;
             if($data){
@@ -75,6 +78,7 @@
             }
             echo json_encode($data);
         }
+        //Getting student score
         public function getStudentScore()
         {
             $where = array('StudentID' => $this->input->post('StudID'),'ScoreID'=> $this->input->post('ScoreID') );
@@ -85,6 +89,7 @@
             }
             echo json_encode($data);
         }
+        //Inserting Student Score
         public function addStudentScore()
         {
             $fields = array('Score' => $this->input->post('Score'),'StudentID'=>$this->input->post('StudID'),'ScoreID'=>$this->input->post('ScoreID') );
@@ -95,6 +100,7 @@
             }
             echo json_encode($data);
         }
+        //Update student score
         public function updateStudentScore()
         {
             $where = array('StudentScoreID' => $this->input->post('STSID') );
@@ -106,6 +112,7 @@
             }
             echo json_encode($data);
         }
+        //Get score type total
         public function getTypeTotal()
         {
             $data['type']=$this->ScoreModel->getTypeTotal($this->input->post("ClassID"),$this->input->post("GradingPeriod"),$this->input->post("Type"));
@@ -115,6 +122,18 @@
             }
             echo json_encode($data);
         }
+        //Soft deletion score
+        public function deleteScore()
+        {
+            $where = array('ScoreID' => $this->input->post('ID') );
+            $query=$this->ScoreModel->Delete($where);
+            $data['success']=false;
+            if($data){
+                $data['success']=true;
+            }
+            echo json_encode($data);
+        }
+        //Getting student total score
         public function getStudentTotalScore()
         {
             $data['studentscore']=$this->StudentScoreModel->getStudentTotalScore($this->input->post("ClassID"),$this->input->post("GradingPeriod"),$this->input->post("Type"),$this->input->post("StudentID"));

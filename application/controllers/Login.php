@@ -7,6 +7,7 @@ class Login extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->model('UserAccountModel');
+		$this->load->model('UserLogModel');
 	}
 	public function index()
 	{
@@ -20,6 +21,7 @@ class Login extends CI_Controller {
 			$this->load->view('login_view');
 		}
 	}
+	//Login: Check if credentials are valid
 	public function Authenticate()
 	{
 		$where = array('Username' => $this->input->post('Username'),'Password'=>$this->input->post('Password'),'IsDeleted'=>0 );
@@ -27,10 +29,15 @@ class Login extends CI_Controller {
 		$data['success']=false;
 		if($data['user']){
 			$data['success']=true;
+			//Setting the session for the user
 			$this->session->set_userdata($data['user'][0]);
+			//Inserting data to Userlogs
+			$fields = array('Action' => 'Login','UserAccountID'=>$_SESSION['UserAccountID'] );
+			$this->UserLogModel->Add($fields);
 		}
 		echo json_encode($data);
 	}
+	//Change password for First Login
 	public function ChangePass()
 	{
 		$where = array('UserAccountID' => $this->input->post('ID') );
@@ -42,9 +49,15 @@ class Login extends CI_Controller {
 		}
 		echo json_encode($data);
 	}
+	//Logout User
 	public function Logout()
 	{
+		//Inserting data to userlogs
+		$fields = array('Action' => 'Logout','UserAccountID'=>$_SESSION['UserAccountID'] );
+		$this->UserLogModel->Add($fields);
+		//Removing the session for user
 		$this->session->sess_destroy();
+		//Changing the url to Login
 		header('location:'.base_url('index.php/Login'));
 	}
 }
