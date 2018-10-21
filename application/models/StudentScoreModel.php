@@ -18,6 +18,15 @@ class StudentScoreModel extends CI_Model{
           return false;
       }
   }
+  public function getStudentTotalScore($classid,$gradingperiod,$type,$studentid)
+  {
+      $query=$this->db->query("SELECT SUM(studentscore.Score) as total FROM score inner join studentscore on score.ScoreID=studentscore.ScoreID where score.ClassID='$classid' and score.GradingPeriod='$gradingperiod' and score.Type='$type' and studentscore.StudentID='$studentid'");
+      if($query->num_rows()>0){
+          return $query->row();
+      }else{
+          return false;
+      }
+  }
   public function Add($fields)
   {
       $this->db->insert('studentscore',$fields);

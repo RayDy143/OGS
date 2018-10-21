@@ -27,4 +27,13 @@ class ScoreModel extends CI_Model{
           return false;
       }
   }
+  public function getTypeTotal($classid,$gradingperiod,$type)
+  {
+      $query=$this->db->query("SELECT SUM(PerfectScore) as total from score where ClassID='$classid' and GradingPeriod='$gradingperiod' and Type='$type'");
+      if($query->num_rows()>0){
+          return $query->row();
+      }else{
+          return false;
+      }
+  }
 }

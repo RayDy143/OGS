@@ -106,6 +106,24 @@
             }
             echo json_encode($data);
         }
+        public function getTypeTotal()
+        {
+            $data['type']=$this->ScoreModel->getTypeTotal($this->input->post("ClassID"),$this->input->post("GradingPeriod"),$this->input->post("Type"));
+            $data['success']=false;
+            if($data){
+                $data['success']=true;
+            }
+            echo json_encode($data);
+        }
+        public function getStudentTotalScore()
+        {
+            $data['studentscore']=$this->StudentScoreModel->getStudentTotalScore($this->input->post("ClassID"),$this->input->post("GradingPeriod"),$this->input->post("Type"),$this->input->post("StudentID"));
+            $data['success']=false;
+            if($data){
+                $data['success']=true;
+            }
+            echo json_encode($data);
+        }
     }
 
  ?>

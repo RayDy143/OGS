@@ -68,7 +68,7 @@
                     <select class="ui dropdown filter" name="FilterType" id="FilterType">
                         <option value="Written Work">Written Output</option>
                         <option value="Performance Task">Performance Task</option>
-                        <option value="Quarterly Assesment">Quarterly Assesment</option>
+                        <option value="Quarterly Assessment">Quarterly Assessment</option>
                     </select>
                 </div>
                 <div class="ui hidden divider">
@@ -100,7 +100,35 @@
             </div>
         </div>
         <div class="ui bottom attached tab segment" data-tab="third">
-            Grade here
+            <div class="ui divider horizontal">
+                Student Grade
+            </div>
+            <div class="ui segment">
+                <div class="field">
+                    <label for="GradeFilterGradingPeriod">Grading Period: </label>
+                    <select class="ui dropdown" name="GradeFilterGradingPeriod" id="GradeFilterGradingPeriod">
+                        <option value="1st Grading">1st Grading</option>
+                        <option value="2nd Grading">2nd Grading</option>
+                        <option value="3rd Grading">3rd Grading</option>
+                        <option value="4th Grading">4th Grading</option>
+                    </select>
+                    <div class="ui hidden divider"></div>
+                    <table id="tblStudentGrade" class="ui celled blue table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Written Work</th>
+                                <th>Performance Task</th>
+                                <th>Quarterly Assessment</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
         <div id="AddScoreModal" class="ui tiny modal">
             <div class="header">
@@ -178,8 +206,15 @@ $(document).ready(function() {
     $('.menu .item')
       .tab()
     ;
+    $( document ).ajaxStart(function() {
+        $('.table').dimmer('show');
+    });
+    $( document ).ajaxComplete(function() {
+        $('.table').dimmer('hide');
+    });
     $("#Type").dropdown();
     $("#GradingPeriod").dropdown();
+    $("#GradeFilterGradingPeriod").dropdown();
     $("#FilterGradingPeriod").dropdown();
     $("#frmAddScore").form({
         fields:{
@@ -279,6 +314,9 @@ $(document).ready(function() {
     $(".filter").change(function() {
         getScore();
     });
+    $("#GradeFilterGradingPeriod").change(function() {
+        getStudentGrade();
+    });
     $("#btnAdd").click(function() {
         $('#AddScoreModal')
           .modal({
@@ -365,6 +403,154 @@ $(document).ready(function() {
                                      +'</tr>';
                     }
                     $("#tblStudentScore tbody").html(_tableContent);
+                }
+            }
+        });
+    }
+    getStudentGrade();
+    function getStudentGrade() {
+        $.ajax({
+            type:'ajax',
+            method:'POST',
+            url:'<?php echo base_url("index.php/ManageClass/getStudent"); ?>',
+            data:{ID:$("#ClassID").val()},
+            dataType:'json',
+            success:function(response) {
+                if(response.success){
+                    var _tableContent='';
+                    var _writtenWorkPercentage=<?php echo '.'.$class->WW; ?>;
+                    var _performanceTaskPercentage=<?php echo '.'.$class->PT; ?>;
+                    var _quarterlyAssessmentPercentage=<?php echo '.'.$class->QA; ?>;
+                    var _writtenWorkTotal=0;
+                    var _performanceTaskTotal=0;
+                    var _quarterlyAssessmentTotal=0;
+                    var _studentWrittenWorkTotal=0;
+                    var _studentPerformanceTaskTotal=0;
+                    var _studentQuarterlyAssessmentTotal=0;
+                    StudentData=response.stud;
+                    $.ajax({
+                        type:'ajax',
+                        method:'POST',
+                        url:'<?php echo base_url("index.php/Teacher/getTypeTotal"); ?>',
+                        data:{ClassID:$("#ClassID").val(),GradingPeriod:$("#GradeFilterGradingPeriod").val(),Type:'Written Work'},
+                        dataType:'json',
+                        async:false,
+                        success:function(response) {
+                            if(response.success){
+                                if(response.type.total!=null){
+                                    _writtenWorkTotal=response.type.total;
+                                }
+                            }
+                        }
+                    });
+                    $.ajax({
+                        type:'ajax',
+                        method:'POST',
+                        url:'<?php echo base_url("index.php/Teacher/getTypeTotal"); ?>',
+                        data:{ClassID:$("#ClassID").val(),GradingPeriod:$("#GradeFilterGradingPeriod").val(),Type:'Performance Task'},
+                        dataType:'json',
+                        async:false,
+                        success:function(response) {
+                            if(response.success){
+                                if(response.type.total!=null){
+                                    _performanceTaskTotal=response.type.total;
+                                }
+                            }
+                        }
+                    });
+                    $.ajax({
+                        type:'ajax',
+                        method:'POST',
+                        url:'<?php echo base_url("index.php/Teacher/getTypeTotal"); ?>',
+                        data:{ClassID:$("#ClassID").val(),GradingPeriod:$("#GradeFilterGradingPeriod").val(),Type:'Quarterly Assessment'},
+                        dataType:'json',
+                        async:false,
+                        success:function(response) {
+                            if(response.success){
+                                if(response.type.total!=null){
+                                    _quarterlyAssessmentTotal=response.type.total;
+                                }
+                            }
+                        }
+                    });
+                    for (var i = 0; i < response.stud.length; i++) {
+                        var _studid=response.stud[i].StudentID;
+                        $.ajax({
+                            type:'ajax',
+                            method:'POST',
+                            url:'<?php echo base_url("index.php/Teacher/getStudentTotalScore"); ?>',
+                            data:{ClassID:$("#ClassID").val(),GradingPeriod:$("#GradeFilterGradingPeriod").val(),Type:'Written Work',StudentID:_studid},
+                            dataType:'json',
+                            async:false,
+                            success:function(response) {
+                                if(response.success){
+                                    if(response.studentscore.total!=null){
+                                        _studentWrittenWorkTotal=response.studentscore.total;
+                                    }
+                                }
+                            }
+                        });
+                        var _writtenWorkGrade=((_studentWrittenWorkTotal/_writtenWorkTotal)*_writtenWorkPercentage)*100;
+                        $.ajax({
+                            type:'ajax',
+                            method:'POST',
+                            url:'<?php echo base_url("index.php/Teacher/getStudentTotalScore"); ?>',
+                            data:{ClassID:$("#ClassID").val(),GradingPeriod:$("#GradeFilterGradingPeriod").val(),Type:'Performance Task',StudentID:_studid},
+                            dataType:'json',
+                            async:false,
+                            success:function(response) {
+                                if(response.success){
+                                    if(response.studentscore.total!=null){
+                                        _studentPerformanceTaskTotal=response.studentscore.total;
+                                    }
+                                }
+                            }
+                        });
+                        var _performanceTaskGrade=((_studentPerformanceTaskTotal/_performanceTaskTotal)*_performanceTaskPercentage)*100;
+                        $.ajax({
+                            type:'ajax',
+                            method:'POST',
+                            url:'<?php echo base_url("index.php/Teacher/getStudentTotalScore"); ?>',
+                            data:{ClassID:$("#ClassID").val(),GradingPeriod:$("#GradeFilterGradingPeriod").val(),Type:'Quarterly Assessment',StudentID:_studid},
+                            dataType:'json',
+                            async:false,
+                            success:function(response) {
+                                if(response.success){
+                                    if(response.studentscore.total!=null){
+                                        _studentQuarterlyAssessmentTotal=response.studentscore.total;
+                                    }
+                                }
+                            }
+                        });
+                        var isPending=false;
+                        var _quarterlyAssessmentGrade=((_studentQuarterlyAssessmentTotal/_quarterlyAssessmentTotal)*_quarterlyAssessmentPercentage)*100;
+                        if(isNaN(_writtenWorkGrade)){
+                            _writtenWorkGrade=0;
+                            isPending=true;
+                        }
+                        if(isNaN(_performanceTaskGrade)){
+                            _performanceTaskGrade=0;
+                            isPending=true;
+                        }
+                        if(isNaN(_quarterlyAssessmentGrade)){
+                            _quarterlyAssessmentGrade=0;
+                            isPending=true;
+                        }
+                        var studGrade=0;
+                        if(isPending){
+                            _studGrade="Pending";
+                        }else{
+                            _studGrade=_writtenWorkGrade+_performanceTaskGrade+_quarterlyAssessmentGrade;
+                        }
+                        _tableContent+='<tr>'
+                                            +'<td>'+response.stud[i].Name+'</td>'
+                                            +'<td>'+_studentWrittenWorkTotal+'/'+_writtenWorkTotal+' ('+_writtenWorkGrade.toFixed(2)+')</td>'
+                                            +'<td>'+_studentPerformanceTaskTotal+'/'+_performanceTaskTotal+' ('+_performanceTaskGrade.toFixed(2)+')</td>'
+                                            +'<td>'+_studentQuarterlyAssessmentTotal+'/'+_quarterlyAssessmentTotal+' ('+_quarterlyAssessmentGrade.toFixed(2)+')</td>'
+                                            +'<td>'+(_studGrade=="Pending"?_studGrade:_studGrade.toFixed(2))+'</td>'
+                                       '</tr>';
+                    }
+                    $("#tblStudentGrade tbody").html(_tableContent);
                 }
             }
         });
